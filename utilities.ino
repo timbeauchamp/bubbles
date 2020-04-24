@@ -143,6 +143,12 @@ void setInBubbleLED()
     digitalWrite(LED_BUILTIN, inBubbleLEDState);     
 }
 
+// Seconds per Bubble = color
+// < 1            Green
+// 1 - 3.9      Green & Yellow
+// 3.9 - 15.4   Yellow
+// 15.4 - 60    Red & Yellow
+// > 60         Red
 void updateLEDs()
 {
     int bph = getBPH();
