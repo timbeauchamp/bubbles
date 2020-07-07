@@ -1,3 +1,6 @@
+#include <Wire.h>
+#include <LiquidCrystal.h>
+
 /*
 Bubble Detector
   
@@ -22,6 +25,8 @@ unsigned long lastBubbleTime = 0;  // millis of last bucket
 unsigned long startTime = 0; // millis that this started 
 unsigned long totalBucketTime = 0; // millis for all buckets 
 unsigned long timeStartingCurrentBucket = 0;  // obvious
+unsigned long lastLCDUpdate = 0;  // millis of last bucket
+boolean initialized = false;
 
 boolean inBubble = false;   // Are we currently in a bubble?
 
@@ -33,31 +38,64 @@ int inBubbleLEDState = LOW;
 // initial Setup
 void setup() 
 {
-  // initialize serial communications at 9600 bps:
-  Serial.begin(9600);
+    // initialize serial communications at 9600 bps:
+    Serial.begin(9600);
 
-  //initialize the indicator LED:
-  pinMode(LED_BUILTIN, OUTPUT);
-  pinMode(LED0Pin, OUTPUT);
-  pinMode(LED1Pin, OUTPUT);
-  pinMode(LED2Pin, OUTPUT);
+    //initialize the indicator LED:
+    pinMode(LED_BUILTIN, OUTPUT);
+    pinMode(LED0Pin, OUTPUT);
+    pinMode(LED1Pin, OUTPUT);
+    pinMode(LED2Pin, OUTPUT);
 
-  resetMinMax();
-  timeStartingCurrentBucket = millis();
-  startTime = millis();
+    resetMinMax();
+    timeStartingCurrentBucket = millis();
+    startTime = millis();
 
-  Serial.println("Initialized");
+    lastLCDUpdate = millis();
+    initialize_LCD();
+    
+    Serial.println("Initialized");
+}
+
+/********************************/
+// include the library code
+#include <Wire.h> 
+#include <LiquidCrystal_I2C.h>
+LiquidCrystal_I2C lcd(0x27,20,4);  // set the LCD address to 0x27 for a 16 chars and 2 line display
+/*********************************************************/
+void initialize_LCD()
+{
+    // uses:
+    // I2C LCD2004    SunFounder Mars board
+    // GND GND
+    // VCC 5V
+    // SDA A4 /pin 20 mega2560
+    // SCL A5 /pin 21 mega2560
+    
+  lcd.init();  //initialize the lcd
+  lcd.backlight();  //open the backlight 
+  updateLCD(true);
 }
 
 void loop() 
 {
-    updateBucket();
+    int updateBucket();
 
     readSensor();
     updateLEDs();
-    
-   getSerial();
-   delay(100);
+
+    if((millis() > (lastLCDUpdate + 1000 * 5)) || (millis() < lastLCDUpdate))
+    {
+        if(!initialized)
+        {
+            initialized = true;
+            bubbles[0] = 0;            
+        }
+        lastLCDUpdate = millis();
+        updateLCD(false);
+    }
+    getSerial();
+    delay(100);
 }
 
 void readSensor()

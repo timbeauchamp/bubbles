@@ -9,7 +9,6 @@ void printStatus()
     Serial.print("current Millis: ");
     Serial.println(millis());
 
-
     // Print the buckets
     for(int i=0; i < NUMBUCKETS; i++)
     {
@@ -49,7 +48,7 @@ void recordBubble()
     Serial.println(bubbles[bubblesOffset]);    
 
     lastBubbleTime = millis();
-    printStatus();
+//    printStatus();
     return;
 }
 
@@ -141,6 +140,46 @@ void setInBubbleLED()
         inBubbleLEDState = LOW;
     }
     digitalWrite(LED_BUILTIN, inBubbleLEDState);     
+}
+
+void updateLCD(boolean show_message)
+{
+    char line1[21];
+    char line2[21];
+    char line3[21];
+    char line4[21];
+    char *lines[] = {line1, line2, line3, line4};    
+
+    Serial.println("Updating LCD");
+    
+    lcd.clear();
+    if(show_message)
+    {
+        sprintf(lines[0], "    I'm Alive!      ");
+        sprintf(lines[1], "  Let's Brew Beer   ");
+        sprintf(lines[2], "  Ready to count    ");
+        sprintf(lines[3], "      BUBBLES!      ");
+    }
+    else
+    {
+        int bph = getBPH();
+        int minutes = millis() / 60000;
+        int sampleseconds = getSecondsStoredInBuckets()/60;
+        int num_bubbles = getTotalBubbles();
+
+        sprintf(lines[0], "Bubbles: %d",num_bubbles);
+        sprintf(lines[1], "Total Mins: %d", minutes);
+        sprintf(lines[2], "Bubbles/Hour: %d", bph);
+        sprintf(lines[3], "Mins Sampled: %d ", sampleseconds);
+    }
+    
+    for(int i=0; i < 4; i++)
+    {
+        lcd.setCursor ( 0, i );            // go to the top left corner
+        lcd.print(lines[i]); // write this string on the top row
+    }
+
+
 }
 
 // Seconds per Bubble = color
