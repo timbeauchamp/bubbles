@@ -143,22 +143,19 @@ void setInBubbleLED()
 }
 
 void updateLCD(boolean show_message)
-{
-    char line1[21];
-    char line2[21];
-    char line3[21];
-    char line4[21];
-    char *lines[] = {line1, line2, line3, line4};    
+{ 
+    String lines[] = {String(),String(),String(),String()};
+   
 
     Serial.println("Updating LCD");
     
     lcd.clear();
     if(show_message)
     {
-        sprintf(lines[0], "    I'm Alive!      ");
-        sprintf(lines[1], "  Let's Brew Beer   ");
-        sprintf(lines[2], "  Ready to count    ");
-        sprintf(lines[3], "      BUBBLES!      ");
+        lines[0]= "    I'm Alive!      ";
+        lines[1]= "  Let's Brew Beer   ";
+        lines[2]= "  Ready to count    ";
+        lines[3]= "      BUBBLES!      ";
     }
     else
     {
@@ -167,10 +164,10 @@ void updateLCD(boolean show_message)
         int sampleseconds = getSecondsStoredInBuckets()/60;
         int num_bubbles = getTotalBubbles();
 
-        sprintf(lines[0], "Bubbles: %d",num_bubbles);
-        sprintf(lines[1], "Total Mins: %d", minutes);
-        sprintf(lines[2], "Bubbles/Hour: %d", bph);
-        sprintf(lines[3], "Mins Sampled: %d ", sampleseconds);
+        lines[0]= "Bubbles: %d",num_bubbles;
+        lines[1]= "Total Mins: %d", minutes;
+        lines[2]= "Bubbles/Hour: %d", bph;
+        lines[3]= "Mins Sampled: %d ", sampleseconds/60;
     }
     
     for(int i=0; i < 4; i++)
