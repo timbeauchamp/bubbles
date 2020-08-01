@@ -147,6 +147,8 @@ void readSensor()
         
         } 
     }
+
+    setInBubbleLED();
  // print the results to the serial monitor:
  // Serial.print("sensor = ");
  // Serial.println(sensorValue);

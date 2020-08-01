@@ -145,6 +145,7 @@ void setInBubbleLED()
 void updateLCD(boolean show_message)
 { 
     String lines[] = {String(),String(),String(),String()};
+//    char[60] buffer;
    
 
     Serial.println("Updating LCD");
@@ -161,13 +162,13 @@ void updateLCD(boolean show_message)
     {
         int bph = getBPH();
         int minutes = millis() / 60000;
-        int sampleseconds = getSecondsStoredInBuckets()/60;
+        int sampleminutes = getSecondsStoredInBuckets()/60;
         int num_bubbles = getTotalBubbles();
 
         lines[0]= "Bubbles: %d",num_bubbles;
         lines[1]= "Total Mins: %d", minutes;
         lines[2]= "Bubbles/Hour: %d", bph;
-        lines[3]= "Mins Sampled: %d ", sampleseconds/60;
+        lines[3] = sprintf("Mins Sampled: %d ", sampleminutes);
     }
     
     for(int i=0; i < 4; i++)
