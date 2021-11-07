@@ -4,6 +4,47 @@ Utilities.ino
   
 */
 
+ 
+
+void updateLCD(boolean show_message)
+{ 
+
+    Serial.println("Updating LCD");    
+    lcd.clear();
+    if(show_message)
+    {
+        lines[0]= "    I'm Alive!      ";
+        lines[1]= "  Let's Brew Beer   ";
+        lines[2]= "  Ready to count    ";
+        lines[3]= "      BUBBLES!      ";
+    }
+    else
+    {
+        int bph = getBPH();
+        int minutes = millis() / 60000;
+        int sampleminutes = getSecondsStoredInBuckets()/60;
+        int num_bubbles = getTotalBubbles();
+        
+        lines[0] = "Bubbles: ";
+        lines[0] += num_bubbles;
+        
+        lines[1] = "Total Mins: ";
+        lines[1] += minutes;
+
+        lines[2] = "Bubbles/Hour: ";
+        lines[2] += bph;
+        
+        lines[3] = "Mins Sampled: ";
+        lines[3] += sampleminutes;
+    }
+    
+    for(int i=0; i < 4; i++)
+    {
+        lcd.setCursor ( 0, i );            // go to the top left corner
+        lcd.print(lines[i]); // write this string on the top row
+    }
+
+}
 void printStatus()
 {
     Serial.print("current Millis: ");
@@ -142,43 +183,7 @@ void setInBubbleLED()
     digitalWrite(LED_BUILTIN, inBubbleLEDState);     
 }
 
-void updateLCD(boolean show_message)
-{ 
-    String lines[] = {String(),String(),String(),String()};
-//    char[60] buffer;
-   
 
-    Serial.println("Updating LCD");
-    
-    lcd.clear();
-    if(show_message)
-    {
-        lines[0]= "    I'm Alive!      ";
-        lines[1]= "  Let's Brew Beer   ";
-        lines[2]= "  Ready to count    ";
-        lines[3]= "      BUBBLES!      ";
-    }
-    else
-    {
-        int bph = getBPH();
-        int minutes = millis() / 60000;
-        int sampleminutes = getSecondsStoredInBuckets()/60;
-        int num_bubbles = getTotalBubbles();
-
-        lines[0]= "Bubbles: %d",num_bubbles;
-        lines[1]= "Total Mins: %d", minutes;
-        lines[2]= "Bubbles/Hour: %d", bph;
-        lines[3] = sprintf("Mins Sampled: %d ", sampleminutes);
-    }
-    
-    for(int i=0; i < 4; i++)
-    {
-        lcd.setCursor ( 0, i );            // go to the top left corner
-        lcd.print(lines[i]); // write this string on the top row
-    }
-
-
-}
 
 // Seconds per Bubble = color
 // < 1            Green
@@ -253,8 +258,8 @@ void getSerial()
         // read the incoming byte:
         byte incomingByte = Serial.read();
     
-//        Serial.println("Got Serial Event ");
-//        Serial.println(incomingByte, DEC);
+ //       Serial.println("Got Serial Event ");
+ //       Serial.println(incomingByte, DEC);
         recordBubble();
       }
 }
