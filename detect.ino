@@ -16,6 +16,8 @@ const int LED0Pin = 3;     // Green LED
 const int LED1Pin = 5;     // Yellow LED
 const int LED2Pin = 6;     // Red LED
 
+String lines[4] ;
+
 int sensorValue = 0;        // value read from the sensor
 
 int bubbles[NUMBUCKETS];  // Buckets of bubbles
@@ -56,12 +58,13 @@ void setup()
     
     Serial.println("Initialized");
 }
+ 
 
 /********************************/
 // include the library code
 #include <Wire.h> 
 #include <LiquidCrystal_I2C.h>
-LiquidCrystal_I2C lcd(0x27,20,4);  // set the LCD address to 0x27 for a 16 chars and 2 line display
+LiquidCrystal_I2C lcd(0x27,20,4);  // set the LCD address to 0x27 for a 16 chars and 4 line display
 /*********************************************************/
 void initialize_LCD()
 {
@@ -75,6 +78,11 @@ void initialize_LCD()
   lcd.init();  //initialize the lcd
   lcd.backlight();  //open the backlight 
   updateLCD(true);
+  lines[0].reserve(30); 
+  lines[1].reserve(30); 
+  lines[2].reserve(30); 
+  lines[3].reserve(30); 
+
 }
 
 void loop() 
